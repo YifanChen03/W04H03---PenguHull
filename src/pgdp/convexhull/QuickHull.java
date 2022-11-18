@@ -24,6 +24,7 @@ public class QuickHull {
 	}
 
 	public static int[][] qHLO_helper(int[][] points, int[] p, int[] q, int[] r) {
+		//catche falls einer der Punkte leer ist oder null
 		if (p != null && p.length > 0 && q != null && q.length > 1) {
 			if (existsPointLeftOf(points, p, q)) {
 				//erstelle rekursiv Dreiecke und teile sie wieder in rq und pr, verbinde diese mit combineHulls
