@@ -11,25 +11,57 @@ public class QuickHull {
 
 	// Returns hull as {p, ..., q, ..., p}, where p is the leftmost point
 	public static int[][] quickHull(int[][] points) {
-		return null;
+		//Tests enthalten mindestens 2 Elemente, welche sich in x-Richtung unterscheiden
+
+		int[] p = findLeftmostPoint(points);
+		int[] q = findRightmostPoint(points);
+		return combineHulls(quickHullLeftOf(points, q, p), quickHullLeftOf(points, p, q));
 	}
 
 	// Returns hull-points in counter-clockwise fashion: {q, ..., p}
 	public static int[][] quickHullLeftOf(int[][] points, int[] p, int[] q) {
-		return null;
+		return qHLO_helper(points, p, q, findPointFurthestLeftFrom(points, p, q));
+	}
+
+	public static int[][] qHLO_helper(int[][] points, int[] p, int[] q, int[] r) {
+		if (p != null && p.length > 0 && q != null && q.length > 1) {
+			if (existsPointLeftOf(points, p, q)) {
+				//erstelle rekursiv Dreiecke und teile sie wieder in rq und pr, verbinde diese mit combineHulls
+				return combineHulls(qHLO_helper(points, r, q, findPointFurthestLeftFrom(points, r, q)), qHLO_helper(points, p, r, findPointFurthestLeftFrom(points, p, r)));
+			} else {
+				//falls kein Punkt weiter links liegt gib zwei Punkte der Grundseite des Dreiecks zurück, gegen Uhrzeigersinn
+				return new int[][] {q, p};
+			}
+		} else {
+			return new int[0][];
+		}
 	}
 
 	public static int[][] combineHulls(int[][] firstHull, int[][] secondHull) {
 		//konkateniere firstHull und secondHull, lösche dabei den Endpunkt von firstHull bzw. Startpunkt von secondHull, sodass dieser Punkt nur einmal vorkommt
-		int[][] combinedHull = new int[firstHull.length + secondHull.length - 1][];
-		for (int i = 0; i < combinedHull.length; i++) {
-			if (i < firstHull.length) {
-				combinedHull[i] = firstHull[i];
+		//falls einer der beiden Arrays == null catchen
+		if (firstHull != null && secondHull != null) {
+			//falls eines der Arrays leer catchen
+			if (firstHull.length < 1 && secondHull.length > 0) {
+				return secondHull;
+			} else if (secondHull.length < 1 && firstHull.length > 0) {
+				return firstHull;
+			} else if (firstHull.length < 1 && secondHull.length < 1) {
+				return new int[0][];
 			} else {
-				combinedHull[i] = secondHull[i - firstHull.length + 1];
+				int[][] combinedHull = new int[firstHull.length + secondHull.length - 1][];
+				for (int i = 0; i < combinedHull.length; i++) {
+					if (i < firstHull.length) {
+						combinedHull[i] = firstHull[i];
+					} else {
+						combinedHull[i] = secondHull[i - firstHull.length + 1];
+					}
+				}
+				return combinedHull;
 			}
+		} else {
+			return new int[0][];
 		}
-		return combinedHull;
 	}
 
 
@@ -101,7 +133,7 @@ public class QuickHull {
 	}
 
 	public static void main(String[] args) {
-		int[][] in = new int[][] { { 0, 0 }, { 0, 2 }, { 2, 0 }, { 2, 2 }, { 1, 1 } };
+		int[][] in = new int[][] {{-1, 0}, {1, 1}, {3, -1}, {3, 2}, {2, 3}, {1, 4}, {4, 3}, {3, 5}, {2, 5}, {0, 4}, {1, 6}, {-1, 4}, {-2, 5}, {-2, 3}, {-3, 2}, {-2, 1}};
 		int[][] hull = quickHull(in);
 		System.out.println(pointsToPlotString(in));
 		System.out.println(pointsToPlotString(hull));
