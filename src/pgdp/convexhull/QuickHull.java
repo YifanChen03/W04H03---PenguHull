@@ -20,7 +20,16 @@ public class QuickHull {
 	}
 
 	public static int[][] combineHulls(int[][] firstHull, int[][] secondHull) {
-		return null;
+		//konkateniere firstHull und secondHull, lösche dabei den Endpunkt von firstHull bzw. Startpunkt von secondHull, sodass dieser Punkt nur einmal vorkommt
+		int[][] combinedHull = new int[firstHull.length + secondHull.length - 1][];
+		for (int i = 0; i < combinedHull.length; i++) {
+			if (i < firstHull.length) {
+				combinedHull[i] = firstHull[i];
+			} else {
+				combinedHull[i] = secondHull[i - firstHull.length + 1];
+			}
+		}
+		return combinedHull;
 	}
 
 
